@@ -1,0 +1,12 @@
+name: API Registration
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug output
+        run: echo "Hello World"
