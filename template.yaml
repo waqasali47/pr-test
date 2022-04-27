@@ -1,0 +1,65 @@
+apiVersion: backstage.io/v1beta2
+kind: Template
+
+metadata:
+  name: api-registration2
+  title: API registration2
+  description: Template for registering API specifications
+
+spec:
+  owner: guest
+  type: api
+
+  parameters:
+    - title: API details
+      required:
+        - name
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Unique name of the API
+          ui:autofocus: true
+          ui:options:
+            rows: 5
+
+    - title: Target repository
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            requestUserCredentials:
+              secretsKey: USER_OAUTH_TOKEN
+              additionalScopes:
+                github:
+                  - repo
+            allowedHosts:
+              - github.com
+        
+
+  steps:
+    - id: template
+      name: Fetch skeleton
+      action: fetch:plain
+      input:
+        url: ./skeleton
+
+    - id: debug
+      name: Debugging
+      action: debug:log
+      input:
+        listWorkspace: true
+
+    - id: publish
+      name: Create pull request
+      action: publish:github:pull-request
+      input:
+        repoUrl: '{{ parameters.repoUrl }}'
+        branchName: api-registration
+        title: API registration workflow
+        description: This pull request introduces preconfigured GitHub workflow for API registration
+        token: '{{ secrets.USER_OAUTH_TOKEN }}'
